@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHP Expert Survey — Bankability Index | Tsinghua University</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F6FA;color:#111827;font-size:15px;line-height:1.6}
+.container{max-width:760px;margin:0 auto;padding:24px 16px 60px}
+.header{background:#1B3A6B;color:white;padding:20px 24px;border-radius:12px;margin-bottom:20px}
+.header-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.header-sub{font-size:13px;opacity:0.75}
+.header-langs{display:flex;gap:8px;margin-top:12px}
+.lang-btn{padding:4px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.4);background:transparent;color:white;font-size:12px;cursor:pointer;transition:all 0.15s}
+.lang-btn.active{background:white;color:#1B3A6B;border-color:white;font-weight:600}
+.prog-wrap{background:white;border-radius:12px;padding:14px 20px;margin-bottom:16px;border:0.5px solid #E0E3EC}
+.prog-label{font-size:12px;color:#5A6478;margin-bottom:6px}
+.prog-bar{height:5px;background:#E8ECF4;border-radius:3px}
+.prog-fill{height:5px;background:#1B3A6B;border-radius:3px;transition:width 0.35s}
+.card{background:white;border-radius:12px;padding:24px;border:0.5px solid #E0E3EC;margin-bottom:16px}
+.step{display:none}.step.active{display:block}
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-bottom:10px}
+.card-title{font-size:18px;font-weight:600;color:#1B3A6B;margin-bottom:4px}
+.card-sub{font-size:13px;color:#5A6478;margin-bottom:16px}
+.info-box{background:#EEF3FB;border-left:3px solid #1B3A6B;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#0C447C;margin-bottom:16px;line-height:1.6}
+.warn-box{background:#FEF0EB;border-left:3px solid #C8860A;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#633806;margin-bottom:16px;line-height:1.6}
+.ok-box{background:#E8F5EF;border-left:3px solid #0F6E56;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#085041;margin-bottom:16px;line-height:1.6}
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:#2E3A4E}
+.form-row input[type=text],.form-row select{width:100%;padding:9px 12px;border:1px solid #D0D6E2;border-radius:8px;font-size:14px;color:#111827;background:white;outline:none;transition:border 0.15s}
+.form-row input[type=text]:focus,.form-row select:focus{border-color:#1B3A6B;box-shadow:0 0 0 3px rgba(27,58,107,0.1)}
+.radio-group{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.radio-group label{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 12px;border:1px solid #E0E3EC;border-radius:8px;cursor:pointer;transition:all 0.15s}
+.radio-group label:hover{background:#F4F6FB;border-color:#B0BAD0}
+.radio-group input[type=radio]{accent-color:#1B3A6B;width:16px;height:16px;flex-shrink:0}
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:500px){.dim-grid{grid-template-columns:1fr}}
+.dim-card{border:1px solid #E0E3EC;border-radius:10px;padding:12px;background:#FAFBFD}
+.dim-card-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;margin-bottom:4px}
+.dim-card h4{font-size:13px;font-weight:600;margin-bottom:2px}
+.dim-card p{font-size:11px;color:#8A96A8;line-height:1.4}
+.matrix-wrap{overflow-x:auto;margin:0 -4px}
+.ahp-table{border-collapse:collapse;min-width:560px;width:100%;font-size:12px}
+.ahp-table th{background:#F2F4F8;padding:7px 4px;text-align:center;font-weight:600;font-size:11px;color:#5A6478;border:1px solid #E0E3EC}
+.ahp-table td{padding:6px 3px;border:1px solid #E0E3EC;text-align:center;vertical-align:middle}
+.ahp-table .lbl-l{text-align:left;padding:6px 10px;font-weight:600;font-size:11px;color:#1B3A6B;background:#EEF3FB;min-width:90px;max-width:110px;word-break:break-word}
+.ahp-table .lbl-r{text-align:right;padding:6px 10px;font-weight:600;font-size:11px;color:#085041;background:#E8F5EF;min-width:90px;max-width:110px;word-break:break-word}
+.ahp-table .mid{background:#E8F5EF}
+.ahp-table input[type=radio]{accent-color:#1B3A6B;width:15px;height:15px;cursor:pointer}
+.cr-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:500}
+.cr-pending{background:#F2F4F8;color:#5A6478}
+.cr-ok{background:#E8F5EF;color:#085041}
+.cr-warn{background:#FEF0EB;color:#633806}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px}
+.btn-back{padding:10px 20px;border:1px solid #D0D6E2;border-radius:8px;background:white;font-size:14px;cursor:pointer;color:#5A6478;transition:all 0.15s}
+.btn-back:hover{background:#F4F6FB}
+.btn-next{padding:10px 28px;background:#1B3A6B;color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.btn-next:hover{background:#152E5A}
+.btn-export{width:100%;padding:12px;background:#0F6E56;color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;transition:background 0.15s}
+.btn-export:hover{background:#085041}
+.result-card{background:#F4F6FB;border-radius:10px;padding:14px;margin-bottom:12px}
+.result-card h4{font-size:13px;font-weight:600;margin-bottom:10px;color:#2E3A4E}
+.weight-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.weight-label{font-size:12px;color:#5A6478;min-width:170px;flex-shrink:0}
+.weight-track{flex:1;height:8px;background:#E0E3EC;border-radius:4px;overflow:hidden}
+.weight-fill{height:8px;border-radius:4px;background:#1B3A6B;transition:width 0.4s}
+.weight-pct{font-size:12px;font-weight:600;min-width:40px;text-align:right;color:#1B3A6B}
+.cr-badge-inline{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.step-dots{display:flex;gap:5px;justify-content:center;margin-top:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:#E0E3EC;transition:background 0.2s}
+.dot.done{background:#1B3A6B}
+.dot.active{background:#0F6E56}
+.consent-check{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #E0E3EC;border-radius:8px;background:#FAFBFD;margin-top:12px;cursor:pointer}
+.consent-check input{margin-top:2px;accent-color:#1B3A6B;width:16px;height:16px;flex-shrink:0}
+.consent-check span{font-size:13px;color:#2E3A4E;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div class="header-title" id="h-title">AHP Expert Survey — Bankability Index</div>
+  <div class="header-sub" id="h-sub">Tsinghua University ICPM · Ashley Zoel Hernández Alcántara · ID 2025280367</div>
+  <div class="header-langs">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('zh')">中文</button>
+  </div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-label" id="prog-label">Step 1 of 7 — Expert profile</div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:14%"></div></div>
+  <div class="step-dots" id="dots"></div>
+</div>
+
+<div id="steps">
+
+<!-- STEP 0: Profile -->
+<div class="step active card" id="s0">
+  <span class="badge" style="background:#EEEDFE;color:#3C3489" id="badge-s0">Expert profile</span>
+  <div class="card-title" id="title-s0">Module A — Expert profile</div>
+  <div class="card-sub" id="sub-s0">Not scored in AHP · used for group classification and subgroup analysis</div>
+  <div class="ok-box" id="consent-box">By completing this survey you consent to your anonymised responses being used for academic research at Tsinghua University. No personally identifiable information will be published.</div>
+
+  <div class="form-row">
+    <label id="l-role">Current role and organisation</label>
+    <input type="text" id="a1" placeholder="e.g. Project Director, CCCC International">
+  </div>
+  <div class="form-row">
+    <label id="l-yrs">Years of experience in LatAm infrastructure procurement / finance</label>
+    <select id="a2">
+      <option value="">— select —</option>
+      <option value="lt2">Less than 2 years</option>
+      <option value="2-5">2–5 years</option>
+      <option value="6-10">6–10 years</option>
+      <option value="gt10">More than 10 years</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label id="l-countries">Countries where you have participated in LatAm infrastructure procurement (list up to 5)</label>
+    <input type="text" id="a3" placeholder="e.g. Colombia, Mexico, Peru">
+  </div>
+  <div class="form-row">
+    <label id="l-involve">Have you been involved in a project where a Chinese SOE participated?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="a4" value="yes-lead"> <span id="r-lead">Yes — as Lead EPC contractor</span></label>
+      <label><input type="radio" name="a4" value="yes-consortium"> <span id="r-cons">Yes — as consortium subcontractor</span></label>
+      <label><input type="radio" name="a4" value="yes-equity"> <span id="r-equity">Yes — as equity investor</span></label>
+      <label><input type="radio" name="a4" value="no"> <span id="r-no">No direct involvement</span></label>
+    </div>
+  </div>
+  <div class="form-row">
+    <label id="l-group">Expert group (researcher selects)</label>
+    <select id="a5">
+      <option value="">— select —</option>
+      <option value="A">Group A — Chinese SOE overseas executive</option>
+      <option value="B">Group B — LatAm government procurement official</option>
+      <option value="C">Group C — MDB / PPP legal & financial consultant</option>
+    </select>
+  </div>
+</div>
+
+<!-- STEP 1: Dimension matrix -->
+<div class="step card" id="s1">
+  <span class="badge" style="background:#EEF3FB;color:#0C447C" id="badge-s1">Module B</span>
+  <div class="card-title" id="title-s1">Which dimension matters most?</div>
+  <div class="card-sub" id="sub-s1">4 dimensions · 6 pairs · ~10 minutes</div>
+  <div class="info-box" id="inst-b">For each pair, indicate which dimension is MORE IMPORTANT for determining whether a Chinese SOE can access a Latin American infrastructure project as Lead EPC contractor. Scale: 1 = equally important · 3 = moderately more · 5 = strongly more · 7 = very strongly more · 9 = extremely more important.</div>
+  <div class="dim-grid">
+    <div class="dim-card"><div class="dim-card-badge" style="background:#EEF3FB;color:#0C447C">A</div><h4 id="dc-a">Financial structure</h4><p id="dc-ap">Cost predictability · revenue certainty · financing robustness</p></div>
+    <div class="dim-card"><div class="dim-card-badge" style="background:#FDF3E3;color:#633806">B</div><h4 id="dc-b">Risk allocation</h4><p id="dc-bp">Contractual clarity · dispute resolution · interface distribution</p></div>
+    <div class="dim-card"><div class="dim-card-badge" style="background:#E8F5EF;color:#085041">C</div><h4 id="dc-c">Institutional environment</h4><p id="dc-cp">Regulatory stability · decision efficiency · procurement transparency</p></div>
+    <div class="dim-card"><div class="dim-card-badge" style="background:#F3E8F5;color:#3C3489">D</div><h4 id="dc-d">Contractor integration</h4><p id="dc-dp">Interface management · communication · early involvement · local adaptation</p></div>
+  </div>
+  <div class="matrix-wrap"><div id="matrix-b"></div></div>
+  <div class="cr-row cr-pending" id="cr-b"><span id="cr-b-text">Complete all 6 pairs to see consistency ratio</span></div>
+</div>
+
+<!-- STEP 2: Dim A variables -->
+<div class="step card" id="s2">
+  <span class="badge" style="background:#EEF3FB;color:#0C447C" id="badge-s2">Module C-A</span>
+  <div class="card-title" id="title-s2">Financial structure — compare variables</div>
+  <div class="card-sub" id="sub-s2">3 variables · 3 pairs · ~5 minutes</div>
+  <div class="info-box" id="inst-ca">Within dimension A only. Your global variable weight = (Dim A weight from Module B) × (weight here). Compare relative importance WITHIN this dimension for Chinese SOE Lead EPC access.</div>
+  <div class="matrix-wrap"><div id="matrix-ca"></div></div>
+  <div class="cr-row cr-pending" id="cr-ca"><span id="cr-ca-text">Complete all 3 pairs</span></div>
+</div>
+
+<!-- STEP 3: Dim B variables -->
+<div class="step card" id="s3">
+  <span class="badge" style="background:#FDF3E3;color:#633806" id="badge-s3">Module C-B</span>
+  <div class="card-title" id="title-s3">Risk allocation — compare variables</div>
+  <div class="card-sub" id="sub-s3">3 variables · 3 pairs · ~5 minutes</div>
+  <div class="info-box" id="inst-cb">Please compare the relative importance of the three variables within Dimension B (Risk Allocation). For each pair, indicate which variable matters more for Chinese SOE Lead EPC access.</div>
+  <div class="matrix-wrap"><div id="matrix-cb"></div></div>
+  <div class="cr-row cr-pending" id="cr-cb"><span id="cr-cb-text">Complete all 3 pairs</span></div>
+</div>
+
+<!-- STEP 4: Dim C variables -->
+<div class="step card" id="s4">
+  <span class="badge" style="background:#E8F5EF;color:#085041" id="badge-s4">Module C-C</span>
+  <div class="card-title" id="title-s4">Institutional environment — compare variables</div>
+  <div class="card-sub" id="sub-s4">3 variables · 3 pairs · ~5 minutes</div>
+  <div class="info-box" id="inst-cc">Within dimension C only. Note: C3 (Procurement transparency) is the variable most directly affected by MDB involvement — factor this into your judgement.</div>
+  <div class="matrix-wrap"><div id="matrix-cc"></div></div>
+  <div class="cr-row cr-pending" id="cr-cc"><span id="cr-cc-text">Complete all 3 pairs</span></div>
+</div>
+
+<!-- STEP 5: Dim D variables -->
+<div class="step card" id="s5">
+  <span class="badge" style="background:#F3E8F5;color:#3C3489" id="badge-s5">Module C-D</span>
+  <div class="card-title" id="title-s5">Contractor integration — compare variables</div>
+  <div class="card-sub" id="sub-s5">4 variables · 6 pairs · ~8 minutes</div>
+  <div class="info-box" id="inst-cd">Please compare the relative importance of the four variables within Dimension D (Contractor Integration). For each pair, indicate which variable matters more for Chinese SOE Lead EPC access.</div>
+  <div class="matrix-wrap"><div id="matrix-cd"></div></div>
+  <div class="cr-row cr-pending" id="cr-cd"><span id="cr-cd-text">Complete all 6 pairs</span></div>
+</div>
+
+<!-- STEP 6: Module D SASAC -->
+<div class="step card" id="s6">
+  <span class="badge" style="background:#FEF0EB;color:#712B13" id="badge-s6">Module D</span>
+  <div class="card-title" id="title-s6">SASAC timeline validation (H2)</div>
+  <div class="card-sub" id="sub-s6">5 questions · ~5 minutes</div>
+  <div class="warn-box" id="warn-d">This module validates Hypothesis 2 of the research. It concerns SASAC administrative timelines and is kept separate from the AHP weighting modules to prevent response anchoring bias (Emrouznejad & Marra, 2017, ref 27).</div>
+
+  <div class="form-row">
+    <label id="d1-q">D1. In your experience, how many calendar days does it typically take for a Chinese SOE to obtain SASAC parent-company guarantee approval for an overseas infrastructure project?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="d1" value="lt20">Less than 20 days</label>
+      <label><input type="radio" name="d1" value="20-30">20–30 days</label>
+      <label><input type="radio" name="d1" value="31-45">31–45 days</label>
+      <label><input type="radio" name="d1" value="46-90">46–90 days</label>
+      <label><input type="radio" name="d1" value="gt90">More than 90 days</label>
+      <label><input type="radio" name="d1" value="dk">I don't know</label>
+    </div>
+  </div>
+  <div class="form-row">
+    <label id="d2-q">D2. In procurements you have participated in, what is the typical contract signing window from award notification to signature?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="d2" value="lt10">Less than 10 working days</label>
+      <label><input type="radio" name="d2" value="11-20">11–20 working days (~28 calendar days)</label>
+      <label><input type="radio" name="d2" value="21-30">21–30 working days</label>
+      <label><input type="radio" name="d2" value="gt30">More than 30 working days</label>
+    </div>
+  </div>
+  <div class="form-row">
+    <label id="d3-q">D3. Have you ever observed a Chinese SOE being unable to sign a contract on time due to guarantee instrument approval delays?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="d3" value="yes">Yes — I witnessed this directly</label>
+      <label><input type="radio" name="d3" value="heard">I have heard of such cases</label>
+      <label><input type="radio" name="d3" value="no">No</label>
+      <label><input type="radio" name="d3" value="dk">No knowledge of this</label>
+    </div>
+  </div>
+  <div class="form-row">
+    <label id="d4-q">D4. If yes — what was the consequence?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="d4" value="void">Bid declared void / tender cancelled</label>
+      <label><input type="radio" name="d4" value="second">Contract awarded to second-place bidder</label>
+      <label><input type="radio" name="d4" value="extension">Extension was granted</label>
+      <label><input type="radio" name="d4" value="consortium">Consortium workaround was used</label>
+      <label><input type="radio" name="d4" value="na">Not applicable / I have not observed this</label>
+    </div>
+  </div>
+  <div class="form-row">
+    <label id="d5-q">D5. In your opinion, is a 20-working-day signing window (28 calendar days) sufficient for a Chinese SOE to obtain SASAC-approved guarantee documentation?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="d5" value="sufficient">Clearly sufficient</label>
+      <label><input type="radio" name="d5" value="possible">Sufficient with preparation</label>
+      <label><input type="radio" name="d5" value="insufficient">Insufficient in most cases</label>
+      <label><input type="radio" name="d5" value="impossible">Structurally impossible</label>
+      <label><input type="radio" name="d5" value="no-opinion">No opinion</label>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="nav-row" id="nav-row">
+  <button class="btn-back" onclick="prevStep()" id="btn-back" style="visibility:hidden">← Back</button>
+  <div style="font-size:12px;color:#8A96A8" id="nav-info"></div>
+  <button class="btn-next" onclick="nextStep()" id="btn-next">Continue →</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results-section" style="display:none">
+  <div class="card">
+    <div style="font-size:18px;font-weight:600;color:#0F6E56;margin-bottom:4px" id="res-title">Survey complete — thank you</div>
+    <div style="font-size:13px;color:#5A6478;margin-bottom:16px" id="res-sub">Your responses have been recorded. Please export and send the JSON file to the researcher.</div>
+    <div id="results-body"></div>
+    <button class="btn-export" onclick="exportResults()" id="btn-export">
+      ↓ Export my responses (JSON file)
+    </button>
+    <div style="font-size:12px;color:#8A96A8;margin-top:8px;text-align:center" id="export-note">
+      Please email the downloaded file to: [researcher email] · Subject: AHP Response
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const TOTAL=7;
+let cur=0,lang='en';
+
+const T={
+en:{
+  'h-title':'AHP Expert Survey — Bankability Index',
+  'h-sub':'Tsinghua University ICPM · Ashley Zoel Hernández Alcántara · ID 2025280367',
+  'badge-s0':'Expert profile','title-s0':'Module A — Expert profile','sub-s0':'Not scored in AHP · used for group classification',
+  'consent-box':'By completing this survey you consent to your anonymised responses being used for academic research at Tsinghua University. No personally identifiable information will be published.',
+  'l-role':'Current role and organisation','l-yrs':'Years of experience in LatAm infrastructure procurement / finance',
+  'l-countries':'Countries where you have participated in LatAm infrastructure procurement (list up to 5)',
+  'l-involve':'Have you been involved in a project where a Chinese SOE participated?',
+  'r-lead':'Yes — as Lead EPC contractor','r-cons':'Yes — as consortium subcontractor','r-equity':'Yes — as equity investor','r-no':'No direct involvement',
+  'l-group':'Expert group (researcher selects)',
+  'badge-s1':'Module B','title-s1':'Which dimension matters most?','sub-s1':'4 dimensions · 6 pairs · ~10 minutes',
+  'inst-b':'For each pair, indicate which dimension is MORE IMPORTANT for determining whether a Chinese SOE can access a Latin American infrastructure project as Lead EPC contractor. Scale: 1=equally important · 3=moderately more · 5=strongly more · 7=very strongly more · 9=extremely more important.',
+  'dc-a':'Financial structure','dc-ap':'Cost predictability · revenue certainty · financing robustness',
+  'dc-b':'Risk allocation','dc-bp':'Contractual clarity · dispute resolution · interface distribution',
+  'dc-c':'Institutional environment','dc-cp':'Regulatory stability · decision efficiency · procurement transparency',
+  'dc-d':'Contractor integration','dc-dp':'Interface management · communication · early involvement · local adaptation',
+  'badge-s2':'Module C-A','title-s2':'Financial structure — compare variables','sub-s2':'3 variables · 3 pairs · ~5 minutes',
+  'inst-ca':'Please compare the relative importance of the following three variables within Dimension A (Financial Structure). For each pair, indicate which variable matters more for a Chinese SOE to access a Latin American infrastructure project as Lead EPC contractor.',
+  'badge-s3':'Module C-B','title-s3':'Risk allocation — compare variables','sub-s3':'3 variables · 3 pairs · ~5 minutes',
+  'inst-cb':'Please compare the relative importance of the following three variables within Dimension B (Risk Allocation). For each pair, indicate which variable matters more for Lead EPC access.',
+  'badge-s4':'Module C-C','title-s4':'Institutional environment — compare variables','sub-s4':'3 variables · 3 pairs · ~5 minutes',
+  'inst-cc':'Please compare the relative importance of the following three variables within Dimension C (Institutional Environment). For each pair, indicate which variable matters more for Lead EPC access.',
+  'badge-s5':'Module C-D','title-s5':'Contractor integration — compare variables','sub-s5':'4 variables · 6 pairs · ~8 minutes',
+  'inst-cd':'Please compare the relative importance of the following four variables within Dimension D (Contractor Integration). For each pair, indicate which variable matters more for Lead EPC access.',
+  'badge-s6':'Module D','title-s6':'SASAC timeline validation (H2)','sub-s6':'5 questions · ~5 minutes',
+  'warn-d':'This module validates a key hypothesis about guarantee instrument timelines. SASAC (State-owned Assets Supervision and Administration Commission of China) is the Chinese government body that supervises and controls state-owned enterprises (SOEs). SASAC must approve any overseas guarantee or financial commitment above certain thresholds before a Chinese SOE can formally sign. Your responses here are kept separate from the AHP weighting questions above to ensure methodological integrity.',
+  'd1-q':'D1. In your experience, how many calendar days does it typically take for a Chinese SOE to obtain SASAC (State-owned Assets Supervision and Administration Commission) parent-company guarantee approval for an overseas infrastructure project?',
+  'd2-q':'D2. In procurements you have participated in, what is the typical contract signing window from award notification to signature?',
+  'd3-q':'D3. Have you ever observed a Chinese SOE being unable to sign a contract on time due to guarantee instrument approval delays?',
+  'd4-q':'D4. If yes — what was the consequence?',
+  'd5-q':'D5. Is a 20-working-day signing window (28 calendar days) sufficient for a Chinese SOE to obtain SASAC-approved guarantee documentation?',
+  'res-title':'Survey complete — thank you','res-sub':'Please export and send the JSON file to the researcher.',
+  'btn-export':'↓ Export my responses (JSON file)',
+  'export-note':'Please email the downloaded file to: [researcher email] · Subject: AHP Response — Bankability Index',
+},
+es:{
+  'h-title':'Encuesta AHP — Bankability Index',
+  'h-sub':'Universidad Tsinghua ICPM · Ashley Zoel Hernández Alcántara · ID 2025280367',
+  'badge-s0':'Perfil del experto','title-s0':'Módulo A — Perfil del experto','sub-s0':'No se puntúa en AHP · clasificación demográfica',
+  'consent-box':'Al completar esta encuesta usted consiente que sus respuestas anonimizadas sean utilizadas para investigación académica en la Universidad Tsinghua. No se publicará información de identificación personal.',
+  'l-role':'Cargo actual y organización','l-yrs':'Años de experiencia en adquisiciones / finanzas de infraestructura en LatAm',
+  'l-countries':'Países donde ha participado en adquisiciones de infraestructura en LatAm (máximo 5)',
+  'l-involve':'¿Ha participado en un proyecto donde una SOE china participó?',
+  'r-lead':'Sí — como contratista Lead EPC','r-cons':'Sí — como subcontratista en consorcio','r-equity':'Sí — como inversionista de capital','r-no':'Sin participación directa',
+  'l-group':'Grupo de experto (el investigador selecciona)',
+  'badge-s1':'Módulo B','title-s1':'¿Qué dimensión importa más?','sub-s1':'4 dimensiones · 6 pares · ~10 minutos',
+  'inst-b':'Para cada par, indique qué dimensión es MÁS IMPORTANTE para que una SOE china acceda como Lead EPC en LatAm. Escala: 1=igual · 3=moderado · 5=fuerte · 7=muy fuerte · 9=extremo.',
+  'dc-a':'Estructura financiera','dc-ap':'Previsibilidad costos · certeza ingresos · solidez financiamiento',
+  'dc-b':'Asignación de riesgos','dc-bp':'Claridad contractual · resolución disputas · distribución interfaces',
+  'dc-c':'Entorno institucional','dc-cp':'Estabilidad regulatoria · eficiencia decisional · transparencia adquisiciones',
+  'dc-d':'Integración del contratista','dc-dp':'Manejo interfaces · comunicación · involucramiento temprano · adaptación local',
+  'badge-s2':'Módulo C-A','title-s2':'Estructura financiera — comparar variables','sub-s2':'3 variables · 3 pares · ~5 minutos',
+  'inst-ca':'Compare la importancia relativa de las siguientes tres variables dentro de la Dimensión A (Estructura Financiera). Para cada par, indique cuál variable importa más para que una SOE china acceda como Lead EPC.',
+  'badge-s3':'Módulo C-B','title-s3':'Asignación de riesgos — comparar variables','sub-s3':'3 variables · 3 pares · ~5 minutos',
+  'inst-cb':'Compare la importancia relativa de las siguientes tres variables dentro de la Dimensión B (Asignación de Riesgos). Para cada par, indique cuál variable importa más para el acceso como Lead EPC.',
+  'badge-s4':'Módulo C-C','title-s4':'Entorno institucional — comparar variables','sub-s4':'3 variables · 3 pares · ~5 minutos',
+  'inst-cc':'Compare la importancia relativa de las siguientes tres variables dentro de la Dimensión C (Entorno Institucional). Para cada par, indique cuál variable importa más para el acceso como Lead EPC.',
+  'badge-s5':'Módulo C-D','title-s5':'Integración del contratista — comparar variables','sub-s5':'4 variables · 6 pares · ~8 minutos',
+  'inst-cd':'Compare la importancia relativa de las siguientes cuatro variables dentro de la Dimensión D (Integración del Contratista). Para cada par, indique cuál variable importa más para el acceso como Lead EPC.',
+  'badge-s6':'Módulo D','title-s6':'Validación del plazo SASAC (H2)','sub-s6':'5 preguntas · ~5 minutos',
+  'warn-d':'Este módulo valida la Hipótesis 2 de la investigación (brecha SBLC/garantía). Se mantiene separado del AHP para prevenir sesgo de anclaje (Emrouznejad & Marra, 2017).',
+  'd1-q':'D1. ¿Cuántos días calendario tarda típicamente una SOE china en obtener la aprobación del SASAC (Comisión de Supervisión y Administración de Activos Estatales de China) para una garantía corporativa en el exterior?',
+  'd2-q':'D2. ¿Cuál es la ventana típica de firma de contrato desde la notificación del fallo hasta la firma?',
+  'd3-q':'D3. ¿Ha observado que una SOE china no pudo firmar a tiempo por retrasos en aprobación de instrumentos de garantía?',
+  'd4-q':'D4. Si respondió sí — ¿cuál fue la consecuencia?',
+  'd5-q':'D5. ¿Es suficiente una ventana de 20 días hábiles (28 días calendario) para que una SOE china obtenga documentación de garantía aprobada por SASAC?',
+  'res-title':'Encuesta completada — gracias','res-sub':'Por favor exporte y envíe el archivo JSON al investigador.',
+  'btn-export':'↓ Exportar mis respuestas (archivo JSON)',
+  'export-note':'Por favor envíe el archivo descargado a: [correo del investigador] · Asunto: Respuesta AHP — Bankability Index',
+},
+zh:{
+  'h-title':'AHP专家问卷 — 可融资性指数',
+  'h-sub':'清华大学ICPM · Ashley Zoel Hernández Alcántara · 学号 2025280367',
+  'badge-s0':'专家信息','title-s0':'模块A — 专家基本信息','sub-s0':'不纳入AHP评分 · 用于分组分类',
+  'consent-box':'完成本问卷即表示您同意您的匿名回答用于清华大学学术研究。不会发布任何个人身份信息。',
+  'l-role':'当前职位及所在机构','l-yrs':'在拉丁美洲基础设施采购/融资领域的工作年限',
+  'l-countries':'您曾参与过采购的拉丁美洲国家（最多5个）',
+  'l-involve':'您是否曾参与过中国国有企业参与的项目？',
+  'r-lead':'是 — 作为牵头EPC承包商','r-cons':'是 — 作为联合体分包商','r-equity':'是 — 作为股权投资方','r-no':'无直接参与',
+  'l-group':'专家组别（研究者填写）',
+  'badge-s1':'模块B','title-s1':'哪个维度最重要？','sub-s1':'4个维度 · 6对比较 · 约10分钟',
+  'inst-b':'对于每对维度，请判断哪个对中国国有企业以牵头EPC身份进入拉美项目更重要。量表：1=同等重要 · 3=略重要 · 5=明显重要 · 7=非常重要 · 9=极其重要。',
+  'dc-a':'财务结构','dc-ap':'成本可预测性 · 收入确定性 · 融资稳健性',
+  'dc-b':'风险分配','dc-bp':'合同清晰度 · 争议解决 · 界面划分',
+  'dc-c':'制度环境','dc-cp':'监管稳定性 · 决策效率 · 采购透明度',
+  'dc-d':'承包商整合','dc-dp':'界面管理 · 沟通结构 · 早期介入 · 本地化适应',
+  'badge-s2':'模块C-A','title-s2':'财务结构 — 变量比较','sub-s2':'3个变量 · 3对比较 · 约5分钟',
+  'inst-ca':'请比较以下三个变量在维度A（财务结构）内部的相对重要性。对于每对变量，请判断哪个对中国国有企业以牵头EPC身份进入拉美项目更重要。',
+  'badge-s3':'模块C-B','title-s3':'风险分配 — 变量比较','sub-s3':'3个变量 · 3对比较 · 约5分钟',
+  'inst-cb':'请比较以下三个变量在维度B（风险分配）内部的相对重要性。对于每对变量，请判断哪个对牵头EPC准入更重要。',
+  'badge-s4':'模块C-C','title-s4':'制度环境 — 变量比较','sub-s4':'3个变量 · 3对比较 · 约5分钟',
+  'inst-cc':'请比较以下三个变量在维度C（制度环境）内部的相对重要性。对于每对变量，请判断哪个对牵头EPC准入更重要。',
+  'badge-s5':'模块C-D','title-s5':'承包商整合 — 变量比较','sub-s5':'4个变量 · 6对比较 · 约8分钟',
+  'inst-cd':'请比较以下四个变量在维度D（承包商整合）内部的相对重要性。对于每对变量，请判断哪个对牵头EPC准入更重要。',
+  'badge-s6':'模块D','title-s6':'国资委审批时限验证（H2）','sub-s6':'5道题 · 约5分钟',
+  'warn-d':'本模块验证一项关于担保审批时限的关键假设。国资委（国务院国有资产监督管理委员会）是中国政府负责监管国有企业的机构。国有企业在境外签署超过一定金额的担保或财务承诺前，须事先获得国资委批准。本模块的回答与上述AHP加权问题分开处理，以确保研究方法的严谨性。',
+  'd1-q':'D1. 根据您的经验，中国国有企业就境外基础设施项目向国资委（国务院国有资产监督管理委员会）申请母公司担保批准，通常需要多少个日历日？',
+  'd2-q':'D2. 在您参与的采购程序中，从中标通知到合同签署的典型时限是多少？',
+  'd3-q':'D3. 您是否曾观察到中国国有企业因担保文件审批延误而无法按时签署合同？',
+  'd4-q':'D4. 若是，请选择后果：',
+  'd5-q':'D5. 您认为20个工作日（约28个日历日）的合同签署窗口，是否足够中国国有企业获得国资委批准的担保文件？',
+  'res-title':'问卷填写完成 — 感谢您的参与','res-sub':'请导出并将JSON文件发送给研究者。',
+  'btn-export':'↓ 导出我的回答（JSON文件）',
+  'export-note':'请将下载的文件发送至：[研究者邮箱] · 邮件主题：AHP回答 — 可融资性指数',
+}};
+
+const VL={
+en:{
+  b:['A — Financial structure','B — Risk allocation','C — Institutional environment','D — Contractor integration'],
+  ca:['A1 — Cost predictability: degree to which project costs are fixed and protected from modifications','A2 — Revenue certainty: strength of government or MDB revenue guarantees for the project','A3 — Financing robustness: diversity and international credibility of project financing sources'],
+  cb:['B1 — Contractual risk clarity: how clearly responsibilities and liabilities are allocated between parties','B2 — Dispute resolution: availability of international arbitration mechanisms (e.g. ICSID, ICC)','B3 — Interface distribution: clarity of EPC scope boundaries and pre-construction coordination structures'],
+  cc:['C1 — Regulatory stability: consistency and predictability of the host-country regulatory framework','C2 — Decision-making efficiency: speed of financial close and contract signing window','C3 — Procurement transparency: openness of bidding rules to international contractors including Chinese firms'],
+  cd:['D1 — Interface manageability: existence of a Project Management Unit (PMO) before construction award','D2 — Communication structure: formal bilingual protocols between Chinese and local teams','D3 — Early contractor involvement: participation of contractor in design or pre-construction phases','D4 — Local adaptation capacity: use of local partners, joint ventures, or bilingual staff']
+},
+es:{
+  b:['A — Estructura financiera','B — Asignación de riesgos','C — Entorno institucional','D — Integración del contratista'],
+  ca:['A1 — Previsibilidad de costos: grado en que los costos del proyecto están fijos y protegidos de modificaciones','A2 — Certeza de ingresos: solidez de las garantías de ingresos del gobierno o del banco multilateral','A3 — Solidez del financiamiento: diversidad y credibilidad internacional de las fuentes de financiamiento'],
+  cb:['B1 — Claridad contractual: qué tan claramente se asignan responsabilidades y obligaciones entre las partes','B2 — Resolución de disputas: disponibilidad de mecanismos de arbitraje internacional (ej. CIADI, CCI)','B3 — Distribución de interfaces: claridad de los límites del alcance EPC y estructuras de coordinación pre-construcción'],
+  cc:['C1 — Estabilidad regulatoria: consistencia y predictibilidad del marco regulatorio del país anfitrión','C2 — Eficiencia decisional: velocidad del cierre financiero y ventana de firma del contrato','C3 — Transparencia de adquisiciones: apertura de las reglas de licitación a contratistas internacionales incluyendo empresas chinas'],
+  cd:['D1 — Manejo de interfaces: existencia de una Unidad de Gestión del Proyecto (PMO) antes de la adjudicación','D2 — Estructura de comunicación: protocolos formales bilingües entre equipos chinos y locales','D3 — Involucramiento temprano del contratista: participación en fases de diseño o pre-construcción','D4 — Capacidad de adaptación local: uso de socios locales, joint ventures o personal bilingüe']
+},
+zh:{
+  b:['A维 — 财务结构','B维 — 风险分配','C维 — 制度环境','D维 — 承包商整合'],
+  ca:['A1 — 成本可预测性：项目成本固定程度及防止合同变更的能力','A2 — 收入确定性：政府或多边开发银行对项目收入的担保力度','A3 — 融资稳健性：项目融资来源的多元化程度及国际信誉'],
+  cb:['B1 — 合同风险清晰度：各方责任与义务的明确程度','B2 — 争议解决机制：国际仲裁机制的可用性（如ICSID、ICC）','B3 — 界面划分：EPC工作范围边界及施工前协调架构的清晰程度'],
+  cc:['C1 — 监管稳定性：东道国监管框架的一致性和可预期性','C2 — 决策效率：财务关闭速度及合同签署窗口时限','C3 — 采购透明度：招标规则对包括中国企业在内的国际承包商的开放程度'],
+  cd:['D1 — 界面可管理性：施工合同授予前项目管理单元（PMO）的存在','D2 — 沟通结构：中方与本地团队之间的正式双语协议','D3 — 承包商早期介入：承包商参与设计或施工前阶段','D4 — 本地化适应能力：使用本地合作伙伴、合资企业或双语人员']
+}};
+
+const RESP={b:{},ca:{},cb:{},cc:{},cd:{}};
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','es','zh'][i]===l));
+  const t=T[l];
+  Object.entries(t).forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.textContent=val;});
+  buildAll();
+  updateDots();
+}
+
+function buildMatrix(cid,labels,mk){
+  const n=labels.length;
+  const pairs=[];
+  for(let i=0;i<n-1;i++)for(let j=i+1;j<n;j++)pairs.push([i,j]);
+  const scaleVals=[-9,-7,-5,-3,1,3,5,7,9];
+  const scaleLabels=['9','7','5','3','1','3','5','7','9'];
+  let h=`<table class="ahp-table"><thead><tr>
+    <th style="min-width:90px;text-align:left;padding-left:10px">${lang==='zh'?'←极重要':'← Much more important'}</th>`;
+  scaleLabels.forEach((v,vi)=>h+=`<th${vi===4?' class="mid"':''}>${v}</th>`);
+  h+=`<th style="min-width:90px;text-align:right;padding-right:10px">${lang==='zh'?'极重要→':'Much more important →'}</th></tr></thead><tbody>`;
+  pairs.forEach(([i,j])=>{
+    const key=`${i}_${j}`;
+    h+=`<tr><td class="lbl-l">${labels[i]}</td>`;
+    scaleVals.forEach((v,vi)=>{
+      const chk=RESP[mk][key]===v?'checked':'';
+      h+=`<td${vi===4?' class="mid"':''}><input type="radio" name="${mk}_${key}" value="${v}" ${chk} onchange="rec('${mk}','${key}',${v})"></td>`;
+    });
+    h+=`<td class="lbl-r">${labels[j]}</td></tr>`;
+  });
+  h+='</tbody></table>';
+  document.getElementById(cid).innerHTML=h;
+}
+
+function buildAll(){
+  const vl=VL[lang];
+  buildMatrix('matrix-b',vl.b,'b');
+  buildMatrix('matrix-ca',vl.ca,'ca');
+  buildMatrix('matrix-cb',vl.cb,'cb');
+  buildMatrix('matrix-cc',vl.cc,'cc');
+  buildMatrix('matrix-cd',vl.cd,'cd');
+  ['b','ca','cb','cc','cd'].forEach(updateCR);
+}
+
+function rec(mk,key,val){RESP[mk][key]=val;updateCR(mk);}
+
+function getA(mk){
+  const sz={b:4,ca:3,cb:3,cc:3,cd:4};
+  const n=sz[mk];
+  const A=Array.from({length:n},()=>Array(n).fill(1));
+  for(let i=0;i<n-1;i++)for(let j=i+1;j<n;j++){
+    const v=RESP[mk][`${i}_${j}`];
+    if(v!==undefined){
+      if(v<0){A[i][j]=1/Math.abs(v);A[j][i]=Math.abs(v);}
+      else if(v===1){A[i][j]=1;A[j][i]=1;}
+      else{A[i][j]=v;A[j][i]=1/v;}
+    }
+  }
+  return A;
+}
+
+function calcW(A){
+  const n=A.length;
+  const cs=A[0].map((_,j)=>A.reduce((s,r)=>s+r[j],0));
+  const nm=A.map(r=>r.map((v,j)=>v/cs[j]));
+  const w=nm.map(r=>r.reduce((s,v)=>s+v,0)/n);
+  const lm=A.reduce((s,r,i)=>s+r.reduce((ss,v,j)=>ss+v*w[j],0)/w[i],0)/n;
+  const CI=(lm-n)/(n-1);
+  const RI=[0,0,0.58,0.90,1.12,1.24][n]||1.12;
+  return{w,CR:n<=2?0:CI/RI};
+}
+
+function totalPairs(mk){const sz={b:6,ca:3,cb:3,cc:3,cd:6};return sz[mk];}
+
+function updateCR(mk){
+  const total=totalPairs(mk),filled=Object.keys(RESP[mk]).length;
+  const badge=document.getElementById(`cr-${mk}`);
+  const txt=document.getElementById(`cr-${mk}-text`);
+  if(!badge||!txt)return;
+  if(filled<total){badge.className='cr-row cr-pending';txt.textContent=`${filled}/${total} pairs completed`;return;}
+  const{CR}=calcW(getA(mk));
+  const pct=(CR*100).toFixed(1);
+  if(CR<0.10){badge.className='cr-row cr-ok';txt.textContent=`CR = ${pct}% — consistent ✓`;}
+  else{badge.className='cr-row cr-warn';txt.textContent=`CR = ${pct}% — please review the highlighted inconsistent pairs (need < 10%)`;}
+}
+
+function updateDots(){
+  const dc=document.getElementById('dots');
+  if(!dc)return;
+  let h='';
+  for(let i=0;i<TOTAL;i++)h+=`<div class="dot${i<cur?'done':i===cur?' active':''}"></div>`;
+  dc.innerHTML=h;
+}
+
+const PROG_LABELS={
+  en:['Step 1/7 — Expert profile','Step 2/7 — Module B: Dimensions','Step 3/7 — Module C-A: Financial structure','Step 4/7 — Module C-B: Risk allocation','Step 5/7 — Module C-C: Institutional environment','Step 6/7 — Module C-D: Contractor integration','Step 7/7 — Module D: SASAC timeline'],
+  es:['Paso 1/7 — Perfil del experto','Paso 2/7 — Módulo B: Dimensiones','Paso 3/7 — Módulo C-A: Estructura financiera','Paso 4/7 — Módulo C-B: Asignación riesgos','Paso 5/7 — Módulo C-C: Entorno institucional','Paso 6/7 — Módulo C-D: Integración contratista','Paso 7/7 — Módulo D: Plazo SASAC'],
+  zh:['第1步/共7步 — 专家信息','第2步/共7步 — 模块B：维度','第3步/共7步 — 模块C-A：财务结构','第4步/共7步 — 模块C-B：风险分配','第5步/共7步 — 模块C-C：制度环境','第6步/共7步 — 模块C-D：承包商整合','第7步/共7步 — 模块D：国资委时限']
+};
+
+function showStep(n){
+  document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.getElementById('prog-fill').style.width=`${Math.round((n+1)/TOTAL*100)}%`;
+  document.getElementById('prog-label').textContent=PROG_LABELS[lang][n];
+  const bb=document.getElementById('btn-back');
+  bb.style.visibility=n>0?'visible':'hidden';
+  const bn=document.getElementById('btn-next');
+  const isLast=n===TOTAL-1;
+  bn.textContent=isLast?(lang==='zh'?'提交 →':lang==='es'?'Enviar →':'Submit →'):(lang==='zh'?'继续 →':lang==='es'?'Continuar →':'Continue →');
+  document.getElementById('nav-info').textContent='';
+  cur=n;
+  updateDots();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStep(){
+  if(cur===TOTAL-1){showResults();return;}
+  showStep(cur+1);
+}
+function prevStep(){if(cur>0)showStep(cur-1);}
+
+const RES_TITLES={
+  en:{b:'Dimension weights',ca:'Dim A — Financial structure',cb:'Dim B — Risk allocation',cc:'Dim C — Institutional environment',cd:'Dim D — Contractor integration'},
+  es:{b:'Pesos de dimensiones',ca:'Dim A — Estructura financiera',cb:'Dim B — Asignación de riesgos',cc:'Dim C — Entorno institucional',cd:'Dim D — Integración del contratista'},
+  zh:{b:'维度权重',ca:'A维 — 财务结构',cb:'B维 — 风险分配',cc:'C维 — 制度环境',cd:'D维 — 承包商整合'}
+};
+
+function showResults(){
+  document.getElementById('steps').style.display='none';
+  document.getElementById('nav-row').style.display='none';
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('prog-label').textContent=lang==='zh'?'完成':lang==='es'?'Completado':'Complete';
+  document.getElementById('results-section').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  const mks=['b','ca','cb','cc','cd'];
+  let html='';
+  mks.forEach(mk=>{
+    const total=totalPairs(mk),filled=Object.keys(RESP[mk]).length;
+    const vl=VL[lang][mk];
+    if(filled<total){
+      html+=`<div class="result-card"><h4>${RES_TITLES[lang][mk]}</h4>
+        <div style="font-size:13px;color:#C8860A">${lang==='zh'?`未完成（${filled}/${total}对）`:lang==='es'?`Incompleto (${filled}/${total} pares):`:`Incomplete (${filled}/${total} pairs)`}</div></div>`;
+      return;
+    }
+    const{w,CR}=calcW(getA(mk));
+    const crOk=CR<0.10;
+    html+=`<div class="result-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h4 style="margin:0">${RES_TITLES[lang][mk]}</h4>
+      <span class="cr-badge-inline" style="${crOk?'background:#E8F5EF;color:#085041':'background:#FEF0EB;color:#712B13'}">CR=${(CR*100).toFixed(1)}%${crOk?' ✓':' !'}</span>
+    </div>`;
+    w.forEach((wi,i)=>{
+      html+=`<div class="weight-row">
+        <span class="weight-label">${vl[i]||'Item '+(i+1)}</span>
+        <div class="weight-track"><div class="weight-fill" style="width:${Math.round(wi*100)}%"></div></div>
+        <span class="weight-pct">${(wi*100).toFixed(1)}%</span>
+      </div>`;
+    });
+    html+='</div>';
+  });
+
+  const sasacLabel=lang==='zh'?'模块D — 国资委时限':lang==='es'?'Módulo D — Plazo SASAC':'Module D — SASAC timeline';
+  html+=`<div class="result-card"><h4>${sasacLabel}</h4>
+    <div style="font-size:12px;color:#5A6478;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px">
+      <div>D1: <b>${document.querySelector('input[name=d1]:checked')?.value||'—'}</b></div>
+      <div>D2: <b>${document.querySelector('input[name=d2]:checked')?.value||'—'}</b></div>
+      <div>D3: <b>${document.querySelector('input[name=d3]:checked')?.value||'—'}</b></div>
+      <div>D4: <b>${document.querySelector('input[name=d4]:checked')?.value||'—'}</b></div>
+      <div>D5: <b>${document.querySelector('input[name=d5]:checked')?.value||'—'}</b></div>
+    </div></div>`;
+
+  document.getElementById('results-body').innerHTML=html;
+}
+
+function exportResults(){
+  const mks=['b','ca','cb','cc','cd'];
+  const weights={};
+  mks.forEach(mk=>{
+    if(Object.keys(RESP[mk]).length>=totalPairs(mk)){
+      const{w,CR}=calcW(getA(mk));
+      weights[mk]={weights:w.map(x=>parseFloat(x.toFixed(4))),CR:parseFloat(CR.toFixed(4))};
+    }
+  });
+  const data={
+    survey:'AHP Bankability Index — Tsinghua University ICPM 2026',
+    researcher:'Ashley Zoel Hernández Alcántara (2025280367)',
+    timestamp:new Date().toISOString(),
+    language:lang,
+    profile:{
+      role:document.getElementById('a1')?.value||'',
+      experience:document.getElementById('a2')?.value||'',
+      countries:document.getElementById('a3')?.value||'',
+      soe_involvement:document.querySelector('input[name=a4]:checked')?.value||'',
+      expert_group:document.getElementById('a5')?.value||''
+    },
+    ahp_raw_responses:RESP,
+    ahp_weights:weights,
+    sasac_module:{
+      d1:document.querySelector('input[name=d1]:checked')?.value||'',
+      d2:document.querySelector('input[name=d2]:checked')?.value||'',
+      d3:document.querySelector('input[name=d3]:checked')?.value||'',
+      d4:document.querySelector('input[name=d4]:checked')?.value||'',
+      d5:document.querySelector('input[name=d5]:checked')?.value||''
+    }
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`AHP_BankabilityIndex_${data.profile.expert_group||'X'}_${Date.now()}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+buildAll();
+updateDots();
+</script>
+</body>
+</html>
