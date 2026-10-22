@@ -112,6 +112,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="card-title" id="title-s0">Module A — Expert profile</div>
 <div class="card-sub" id="sub-s0">Not scored in AHP · used for group classification and subgroup analysis</div>
 <div class="ok-box" id="consent-box">By completing this survey you consent to your anonymised responses being used for academic research at Tsinghua University. No personally identifiable information will be published.</div>
+
+<div class="practice-card" id="practice-card" style="border:2px dashed #671372;border-radius:12px;padding:16px;margin-bottom:20px;background:#FBF7FC">
+<div style="font-weight:700;color:#671372;margin-bottom:6px" id="practice-title">🎯 Quick practice — see how this works (30 seconds)</div>
+<div style="font-size:13px;color:#2E3A4E;margin-bottom:12px" id="practice-instructions">Before you begin, try this unrelated example so you can see exactly how your consistency is checked. Imagine you are choosing an apartment. Compare these 3 factors two at a time.</div>
+<div id="matrix-practice"></div>
+<div class="cr-row cr-pending" id="cr-practice" style="margin-top:10px"><span id="cr-practice-text">Answer all 3 pairs to see your result</span></div>
+<div id="practice-explain" style="font-size:13px;line-height:1.6;margin-top:8px;display:none"></div>
+<button type="button" onclick="resetPractice()" style="margin-top:10px;padding:7px 16px;border:1px solid #671372;color:#671372;background:white;border-radius:8px;font-size:13px;cursor:pointer" id="practice-reset">↺ Try again</button>
+</div>
+
 <div class="form-row">
 <label id="l-role">Current role and organisation</label>
 <input type="text" id="a1" placeholder="e.g. Project Director, CCCC International">
@@ -305,6 +315,9 @@ en:{
 'h-sub':'Tsinghua University ICPM · Ashley Zoel Hernández Alcántara · ID 2025280367',
 'badge-s0':'Expert profile','title-s0':'Module A — Expert profile','sub-s0':'Not scored in AHP · used for group classification',
 'consent-box':'By completing this survey you consent to your anonymised responses being used for academic research at Tsinghua University. No personally identifiable information will be published.',
+'practice-title':'🎯 Quick practice — see how this works (30 seconds)',
+'practice-instructions':'Before you begin, try this unrelated example so you can see exactly how your consistency is checked. Imagine you are choosing an apartment. Compare these 3 factors two at a time.',
+'practice-reset':'↺ Try again',
 'l-role':'Current role and organisation','l-yrs':'Years of experience in LatAm infrastructure procurement / finance',
 'l-countries':'Countries where you have participated in LatAm infrastructure procurement (list up to 5)',
 'l-involve':'Have you been involved in a project where a Chinese SOE participated?',
@@ -341,6 +354,9 @@ es:{
 'h-sub':'Universidad Tsinghua ICPM · Ashley Zoel Hernández Alcántara · ID 2025280367',
 'badge-s0':'Perfil del experto','title-s0':'Módulo A — Perfil del experto','sub-s0':'No se puntúa en AHP · clasificación demográfica',
 'consent-box':'Al completar esta encuesta usted consiente que sus respuestas anonimizadas sean utilizadas para investigación académica en la Universidad Tsinghua. No se publicará información de identificación personal.',
+'practice-title':'🎯 Práctica rápida — así funciona (30 segundos)',
+'practice-instructions':'Antes de comenzar, pruebe este ejemplo (no relacionado con el tema real) para ver exactamente cómo se revisa su consistencia. Imagine que está eligiendo un departamento. Compare estos 3 factores de dos en dos.',
+'practice-reset':'↺ Intentar de nuevo',
 'l-role':'Cargo actual y organización','l-yrs':'Años de experiencia en adquisiciones / finanzas de infraestructura en LatAm',
 'l-countries':'Países donde ha participado en adquisiciones de infraestructura en LatAm (máximo 5)',
 'l-involve':'¿Ha participado en un proyecto donde una SOE china participó?',
@@ -377,6 +393,9 @@ zh:{
 'h-sub':'清华大学ICPM · Ashley Zoel Hernández Alcántara · 学号 2025280367',
 'badge-s0':'专家信息','title-s0':'模块A — 专家基本信息','sub-s0':'不纳入AHP评分 · 用于分组分类',
 'consent-box':'完成本问卷即表示您同意您的匿名回答用于清华大学学术研究。不会发布任何个人身份信息。',
+'practice-title':'🎯 快速练习——了解运作方式（30秒）',
+'practice-instructions':'开始之前，请先尝试这个与本次调查主题无关的例子，以便您了解一致性是如何被检验的。假设您正在选择一套公寓，请两两比较以下3个因素。',
+'practice-reset':'↺ 重新尝试',
 'l-role':'当前职位及所在机构','l-yrs':'在拉丁美洲基础设施采购/融资领域的工作年限',
 'l-countries':'您曾参与过采购的拉丁美洲国家（最多5个）',
 'l-involve':'您是否曾参与过中国国有企业参与的项目？',
@@ -434,6 +453,13 @@ cd:['D1 — 界面可管理性：施工合同授予前项目管理单元（PMO�
 
 const RESP={b:{},ca:{},cb:{},cc:{},cd:{}};
 
+const PRACTICE_LABELS={
+en:['Price','Location','Size'],
+es:['Precio','Ubicación','Tamaño'],
+zh:['价格','位置','面积']
+};
+let PRACTICE_RESP={};
+
 function setLang(l){
 lang=l;
 document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['en','es','zh'][i]===l));
@@ -474,6 +500,91 @@ buildMatrix('matrix-cb',vl.cb,'cb');
 buildMatrix('matrix-cc',vl.cc,'cc');
 buildMatrix('matrix-cd',vl.cd,'cd');
 ['b','ca','cb','cc','cd'].forEach(updateCR);
+buildPracticeMatrix();
+}
+
+function buildPracticeMatrix(){
+const labels=PRACTICE_LABELS[lang];
+const n=3;
+const pairs=[[0,1],[0,2],[1,2]];
+const scaleVals=[-9,-7,-5,-3,1,3,5,7,9];
+const scaleLabels=['9','7','5','3','1','3','5','7','9'];
+let h=`<table class="ahp-table"><thead><tr>
+<th style="min-width:90px;text-align:left;padding-left:10px">${lang==='zh'?'←极重要':'← Much more important'}</th>`;
+scaleLabels.forEach((v,vi)=>h+=`<th${vi===4?' class="mid"':''}>${v}</th>`);
+h+=`<th style="min-width:90px;text-align:right;padding-right:10px">${lang==='zh'?'极重要→':'Much more important →'}</th></tr></thead><tbody>`;
+pairs.forEach(([i,j])=>{
+const key=`${i}_${j}`;
+h+=`<tr><td class="lbl-l">${labels[i]}</td>`;
+scaleVals.forEach((v,vi)=>{
+const chk=PRACTICE_RESP[key]===v?'checked':'';
+h+=`<td${vi===4?' class="mid"':''}><input type="radio" name="practice_${key}" value="${v}" ${chk} onchange="recPractice('${key}',${v})"></td>`;
+});
+h+=`<td class="lbl-r">${labels[j]}</td></tr>`;
+});
+h+='</tbody></table>';
+const el=document.getElementById('matrix-practice');
+if(el)el.innerHTML=h;
+updatePracticeCR();
+}
+
+function recPractice(key,val){PRACTICE_RESP[key]=val;updatePracticeCR();}
+
+function resetPractice(){PRACTICE_RESP={};buildPracticeMatrix();}
+
+function updatePracticeCR(){
+const badge=document.getElementById('cr-practice');
+const txt=document.getElementById('cr-practice-text');
+const explainBox=document.getElementById('practice-explain');
+if(!badge||!txt)return;
+const filled=Object.keys(PRACTICE_RESP).length;
+if(filled<3){
+badge.className='cr-row cr-pending';
+txt.textContent=lang==='zh'?`已完成${filled}/3项`:lang==='es'?`${filled}/3 pares completados`:`${filled}/3 pairs completed`;
+if(explainBox)explainBox.style.display='none';
+return;
+}
+const A=[[1,1,1],[1,1,1],[1,1,1]];
+[[0,1],[0,2],[1,2]].forEach(([i,j])=>{
+const v=PRACTICE_RESP[`${i}_${j}`];
+if(v<0){A[i][j]=1/Math.abs(v);A[j][i]=Math.abs(v);}
+else if(v===1){A[i][j]=1;A[j][i]=1;}
+else{A[i][j]=v;A[j][i]=1/v;}
+});
+const{w,CR}=calcW(A);
+const pct=(CR*100).toFixed(1);
+const labels=PRACTICE_LABELS[lang];
+if(CR<0.10){
+badge.className='cr-row cr-ok';
+txt.textContent=`CR = ${pct}% — ${lang==='zh'?'一致 ✓ 太好了，真实问题也是这样比较的。':lang==='es'?'consistente ✓ ¡Muy bien! Las preguntas reales funcionan igual.':'consistent ✓ Great — the real questions work exactly like this.'}`;
+if(explainBox)explainBox.style.display='none';
+}else{
+badge.className='cr-row cr-warn';
+txt.textContent=`CR = ${pct}% — ${lang==='zh'?'不一致，请见下方说明':lang==='es'?'inconsistente — vea la explicación abajo':'inconsistent — see the explanation below'}`;
+const order=[0,1,2].slice().sort((a,b)=>w[b]-w[a]);
+const mismatches=[];
+[[0,1],[0,2],[1,2]].forEach(([i,j])=>{
+const v=PRACTICE_RESP[`${i}_${j}`];
+const expectedIWins=w[i]>w[j];
+const actualIWins=v>0;
+if(expectedIWins!==actualIWins)mismatches.push([i,j]);
+});
+let msg;
+if(lang==='es'){
+msg=`Esto es justo lo que revisan las preguntas reales: si usted dijo que <b>${labels[order[0]]}</b> importa más que <b>${labels[order[1]]}</b>, y <b>${labels[order[1]]}</b> importa más que <b>${labels[order[2]]}</b>, entonces lógicamente <b>${labels[order[0]]}</b> también debería importar más que <b>${labels[order[2]]}</b>. `;
+if(mismatches.length)msg+=`Su respuesta sobre <b>${labels[mismatches[0][0]]}</b> vs <b>${labels[mismatches[0][1]]}</b> contradice esa lógica — por eso sale "inconsistente". `;
+msg+=`Presione "Intentar de nuevo" y trate de mantener el mismo orden de importancia en las 3 comparaciones.`;
+}else if(lang==='zh'){
+msg=`这正是真实问题所检验的内容：如果您认为<b>${labels[order[0]]}</b>比<b>${labels[order[1]]}</b>更重要，而<b>${labels[order[1]]}</b>又比<b>${labels[order[2]]}</b>更重要，那么按逻辑<b>${labels[order[0]]}</b>也应该比<b>${labels[order[2]]}</b>更重要。`;
+if(mismatches.length)msg+=`您关于<b>${labels[mismatches[0][0]]}</b>与<b>${labels[mismatches[0][1]]}</b>的回答与这一逻辑相矛盾——这就是被标记为"不一致"的原因。`;
+msg+=`请点击"重新尝试"，并在三次比较中保持相同的重要性顺序。`;
+}else{
+msg=`This is exactly what the real questions check: if you said <b>${labels[order[0]]}</b> matters more than <b>${labels[order[1]]}</b>, and <b>${labels[order[1]]}</b> matters more than <b>${labels[order[2]]}</b>, then logically <b>${labels[order[0]]}</b> should also matter more than <b>${labels[order[2]]}</b>. `;
+if(mismatches.length)msg+=`Your answer on <b>${labels[mismatches[0][0]]}</b> vs <b>${labels[mismatches[0][1]]}</b> contradicts that logic — that's why it comes out "inconsistent". `;
+msg+=`Click "Try again" and try to keep the same order of importance across all 3 comparisons.`;
+}
+if(explainBox){explainBox.innerHTML=msg;explainBox.style.display='block';}
+}
 }
 
 function rec(mk,key,val){RESP[mk][key]=val;updateCR(mk);}
@@ -500,7 +611,8 @@ const nm=A.map(r=>r.map((v,j)=>v/cs[j]));
 const w=nm.map(r=>r.reduce((s,v)=>s+v,0)/n);
 const lm=A.reduce((s,r,i)=>s+r.reduce((ss,v,j)=>ss+v*w[j],0)/w[i],0)/n;
 const CI=(lm-n)/(n-1);
-const RI=[0,0,0.58,0.90,1.12,1.24][n]||1.12;
+const RI_TABLE={1:0,2:0,3:0.58,4:0.90,5:1.12,6:1.24};
+const RI=RI_TABLE[n]!==undefined?RI_TABLE[n]:1.12;
 return{w,CR:n<=2?0:CI/RI};
 }
 
